@@ -4,7 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%>
 
 
-<!DOCTYPE html>
 <html>
 
 <head>
@@ -288,6 +287,9 @@
         
         function paid()
         {
+        	//window.open('official_receipt.jsp', '_blank');
+        	//window.open('official_receipt.jsp');
+
         	if(payment >= grandTotal){
             	swal({
             		
@@ -301,8 +303,8 @@
             		  closeOnConfirm: false,
             		  closeOnCancel: false,
           		}, function(isConfirm){
-          			if(isConfirm){
-                      	
+          			if(isConfirm) {
+
       	          		var area_id = localStorage.getItem("area_id")
       	          		
       	          		$.ajax({
@@ -321,7 +323,8 @@
 	      	                            window.location=window.location;
 	      	                        },1000);
       	          				}
-      	          			});			
+      	          			});
+	      	          	window.open('official_receipt.jsp');
           			}
           			
           			else{

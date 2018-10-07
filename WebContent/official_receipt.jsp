@@ -89,6 +89,7 @@
 <script>
 $(function(){
 	console.log(localStorage.getItem("area_id"));
+
 	$.ajax({
 		type:'GET',
 		data:{
@@ -101,8 +102,6 @@ $(function(){
 		    
 		    
 		}
-	}).then(function(){
-		window.print();
 	});
 	
 });
