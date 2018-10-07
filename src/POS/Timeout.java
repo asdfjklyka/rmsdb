@@ -3,6 +3,7 @@ package POS;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -61,21 +62,26 @@ public class Timeout extends HttpServlet {
 		
 		try {
 			
-			String sql2 = "UPDATE `rms_area` SET `Area_Status` = 'Available', `reserved_at` = NULL WHERE `rms_area`.`Area_Id` = " +area_id;
+			String updateArea = "UPDATE `rms_area` SET `Area_Status` = 'Available', `reserved_at` = NULL WHERE `rms_area`.`Area_Id` = " +area_id;
 			
-			stmnt.execute(sql2);
+			stmnt.execute(updateArea);
 			
-			String sql = "update `rms_customer` set `time_out` = CURRENT_TIMESTAMP where Area_Id_f = '"+area_id+"' ORDER BY time_in desc limit 1";
-			stmnt.execute(sql);
+			String updateCustomer = "update `rms_customer` set `time_out` = CURRENT_TIMESTAMP where Area_Id_f = '"+area_id+"' ORDER BY time_in desc limit 1";
+			stmnt.execute(updateCustomer);
 			
-			String sqlPayment = "insert into rms_order_payments (area_id, payment, loose_change) values('"+area_id+"','"+payment+"','"+loose_change+"') ";
-					
-			String sql3 = "update `rms_orders` set `paid_at` = CURRENT_TIMESTAMP, status='Paid' where area_id = '"+area_id+"' ";
-			stmnt.execute(sql3);
+			String sqlPayment = "insert into rms_order_payments (area_id, payment, loose_change) values('"+area_id+"','"+payment+"','"+loose_change+"')";
+			stmnt.execute(sqlPayment);
+
+			ResultSet rs = stmnt.executeQuery("select id from rms_order_payments order by created_at desc limit 1");
+			rs.next();
+			String payment_id = rs.getString("id");
+
 			
+			String updateOrder = "update `rms_orders` set `paid_at` = CURRENT_TIMESTAMP, `status`='Paid', `payment_id` = '"+payment_id+"' where status='Unpaid' and area_id = '"+area_id+"' ";
+			stmnt.execute(updateOrder);
 					
 			PrintWriter out = response.getWriter();	
-			out.print(sql2);
+			out.print(payment_id);
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

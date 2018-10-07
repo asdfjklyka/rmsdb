@@ -76,24 +76,9 @@ public class GetOrderData extends HttpServlet {
 			    view += "</tr>";
 			    view += "<tr>";
 			    	view += "<td class='text-right' colspan='2'><h2><strong>Grand Total: </strong></h2></td>";
-			    	view += "<td class='text-left text-danger'><h2><strong>Php "+String.format("%.0f", grandTotal)+"</strong></h2></td>";
+			    	view += "<td class='text-left text-danger'><h2><strong>Php <span id='grandTotal'> "+String.format("%.0f", grandTotal)+" </span></strong></h2></td>";
 	            view += "</tr>";
 	            
-	    /*        view += "<tr>";
-		    		view += "<div class='receipt-header receipt-header-mid receipt-footer'>" + 
-		    				"					<div class='col-xs-8 col-sm-8 col-md-8 text-left'>" + 
-		    				"						<div class='receipt-right'>" + 
-		    				"							<p>Date : "+rs.getString("paid_at")+"</p>" + 
-		    				"							<h5 style='color: rgb(140, 140, 140);'>Thank you, come again</h5>" + 
-		    				"						</div>" + 
-		    				"					</div>" + 
-		    				"					<div class='col-xs-4 col-sm-4 col-md-4'>" + 
-		    				"						<div class='receipt-left'>" + 
-		    				"							<h3>Signature</h3>" + 
-		    				"						</div>" + 
-		    				"					</div>" + 
-		    				"				</div>";
-		    	view += "</tr>";*/
 
 	            
 	            String sql4 = "update `rms_customer` set `total_pay` = '"+grandTotal+"' where area_id_f = '"+area_id+"' ";

@@ -23,10 +23,14 @@
     <link rel="stylesheet" href="css/colorpicker.css" />
     <link rel="stylesheet" href="css/dropzone.css" />
     <link rel="stylesheet" href="css/jquery.datatables.css" />
-    <!--dynamic table-->s
+    <!--dynamic table-->
 	<link href="js/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <!-- Custom styles for this template -->
-
+	<style>
+		body.modal-open {
+		    overflow: hidden !important;
+		}
+	</style>
 </head>
 
 <body style="background: #040404;">
@@ -142,21 +146,21 @@
 					                                     		<a class="btn btn-warning" id="available-${count}" style="width:48px; " data-toggle="modal" data-target=".bs-example-modal-lg-3" onclick="setIndex(${count});"><i class="fa fa-glass"></i></a>					                                     	
 							                                     	<a class="btn btn-success"  id="order-${count}" style="width:48px; display:none; margin-left: 1%" href="category.jsp" onclick="saveToLocalStorage(${row.area_id})"><i class="fa fa-plus"  ></i></a>
 																	<a class="btn btn-default " id="print-${count}" style="width:48px; display:none; margin-left: 1%" target="_blank" href="official_receipt.jsp" onclick="saveToLocalStorage(${row.area_id})"><i class="fa fa-print"></i></a>
-							            							<a class="btn btn-default " id="billout-${count}" style="width:48px;  display:none; margin-left: 1%" target="_blank" href="javascript:;" data-toggle="modal" data-target=".bs-example-modal-lg-3-1" onclick="paid(${count})"><i class="fa fa-usd"></i></a>
+							            							<a class="btn btn-default " id="billout-${count}" style="width:48px;  display:none; margin-left: 1%" target="_blank" href="javascript:;" data-toggle="modal" data-target=".bs-example-modal-lg-3-1" onclick="getOrderData(${row.area_id})"><i class="fa fa-usd"></i></a>
 							            							<a class="btn btn-black " id="cancel-${count}"  style="width:48px; display:none; margin-left: 1%" onclick="cancel(${count});"><i class="fa fa-times"></i></a> 
 					                                     	</c:if>
 					                                     		<c:if test="${row.area_status == 'Unavailable'}">
 						                                     		<a class="btn btn-warning" id="available-${count}" style="width:48px; display:none" data-toggle="modal" data-target=".bs-example-modal-lg-3" onclick="setIndex(${count});"><i class="fa fa-glass"></i></a>					                                     	
 							                                     	<a class="btn btn-success"  id="order-${count}" style="width:48px; margin-left: 1%" href="category.jsp" onclick="saveToLocalStorage(${row.area_id})"><i class="fa fa-plus"  ></i></a>
 																	<a class="btn btn-default " id="print-${count}" style="width:48px; display:none; margin-left: 1%" target="_blank" href="official_receipt.jsp" onclick="saveToLocalStorage(${row.area_id})"><i class="fa fa-print"></i></a>
-							            							<a class="btn btn-default " id="billout-${count}" style="width:48px; display:none; margin-left: 1%" target="_blank" href="javascript:;" data-toggle="modal" data-target=".bs-example-modal-lg-3-1" onclick="paid(${count})"><i class="fa fa-usd"></i></a>
+							            							<a class="btn btn-default " id="billout-${count}" style="width:48px; display:none; margin-left: 1%" target="_blank" href="javascript:;" data-toggle="modal" data-target=".bs-example-modal-lg-3-1" onclick="getOrderData(${row.area_id})"><i class="fa fa-usd"></i></a>
 							            							<a class="btn btn-black " id="cancel-${count}"  style="width:48px; margin-left: 1%" onclick="cancel(${count});"><i class="fa fa-times"></i></a> 
 					                                     	</c:if>
 					                                     	<c:if test="${row.area_status == 'Ordered'}">
 																	<a class="btn btn-warning" id="available-${count}" style="width:48px; display:none" data-toggle="modal" data-target=".bs-example-modal-lg-3" onclick="setIndex(${count});"><i class="fa fa-glass"></i></a>					                                     	
 							                                     	<a class="btn btn-success"  id="order-${count}" style="width:48px; margin-left: 1%" href="category.jsp" onclick="saveToLocalStorage(${row.area_id})"><i class="fa fa-plus"  ></i></a>
 																	<a class="btn btn-default " id="print-${count}" style="width:48px;  margin-left: 1%" target="_blank" href="official_receipt.jsp" onclick="saveToLocalStorage(${row.area_id})"><i class="fa fa-print"></i></a>
-							            							<a class="btn btn-default " id="billout-${count}" style="width:48px; margin-left: 1%" target="_blank" href="javascript:;" data-toggle="modal" data-target=".bs-example-modal-lg-3-1" onclick="paid(${count})"><i class="fa fa-usd"></i></a>
+							            							<a class="btn btn-default " id="billout-${count}" style="width:48px; margin-left: 1%" target="_blank" href="javascript:;" data-toggle="modal" data-target=".bs-example-modal-lg-3-1" onclick="getOrderData(${row.area_id})"><i class="fa fa-usd"></i></a>
 							            							<a class="btn btn-black " id="cancel-${count}"  style="width:48px; display:none; margin-left: 1%" onclick="cancel(${count});"><i class="fa fa-times"></i></a>					                                     	</c:if>
 					                                     	</td> 
 									                   </tr>
@@ -202,7 +206,7 @@
     </form>
 
     <form method="post" id="form-data">
-        <div class="modal fade bs-example-modal-lg-3-1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="margin-top: 10%">
+        <div class="modal fade bs-example-modal-lg-3-1" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content" id="sads">
                     <div class="modal-header" style="background-color: #941822">
@@ -210,12 +214,24 @@
                         <h4 class="modal-title" style="color: white">Payment</h4>
                     </div>
                     <div class="modal-body">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i style="height: 57%"/></i></span>
-                            <input type="number" class="form-control" placeholder="Enter Bill" name="payment" id="payment" />
+                        <div class="form-group">
+	                        <table class="table table-bordered">
+			                    <thead>
+			                        <tr>
+			                            <th>Name</th>
+			                            <th>Quantity</th>
+			                            <th>Amount</th>
+			                        </tr>
+			                    </thead>
+			                    <tbody id="contents">
+			                    </tbody>
+              			  </table>
+              			  
+                            <label>PRICE: </label><input type="number" class="form-control" placeholder="Enter Bill" name="payment" id="payment" /><br/>
+                            <label>CHANGE: </label><input type="text" name="loose_change" id="loose_change" class="form-control" disabled>
                         </div><br/>
                         <div>
-                            <button class="btn btn-primary pull-right" id="payment" type="button" data-dismiss="modal">Add Payment</button></div><br><br>
+                            <button class="btn btn-primary pull-right" onclick="paid()" type="button" data-dismiss="modal">Add Payment</button></div><br><br>
                     </div>
                 </div>
             </div>
@@ -246,6 +262,7 @@
     <!--Validation-->
     <script src="js/jquery.validate.min.js"></script>
     <!--Tables-->
+    
     <script src="js/jquery.datatables.min.js"></script>
     <script src="js/plugins/sweetalert/sweetalert.min.js"></script>
     <script type="text/javascript">
@@ -253,7 +270,8 @@
     	
     
     	var idIndex = 0;
-    	
+    	var grandTotal = 0;
+    	var payment = 0;
     	
         function setIndex(id){
         	idIndex = id;
@@ -268,51 +286,55 @@
 
         
         
-        function paid(id)
+        function paid()
         {
-        	swal({
-        		
-        		title: "Customer Paid.",
-        		  text: "This will mark the order as paid, and will set the area as available.",
-        		  type: "warning",
-        		  showCancelButton: true,
-        		  confirmButtonColor: '#dd6855',
-        		  confirmButtonText: 'Yes',
-        		  cancelButtonText: 'No',
-        		  closeOnConfirm: false,
-        		  closeOnCancel: false,
-      		}, function(isConfirm){
-      			if(isConfirm){
-                  	idIndex = id;
-                  	
-  	          		var area_id = $("#area-"+idIndex).val();
-  	          		
-  	          		$.ajax({
-  	          				type:'POST',
-  	          				data:{
-  	          					area_id: area_id,
-  	          					payment: payment
-  	          				},
-  	          				url:'Timeout',
-  	          				success: function(data){
-  	          					console.log(data);
-  	                		    swal("Area is now available!", {
-  	                  		      icon: "success",
-  	                  		    });
-  	                        setTimeout(function() 
-  	                        {
-  	                            window.location=window.location;
-  	                        },1000);
-  	          				}
-  	          			});			
-      			}
-      			
-      			else{
-      				swal("Cancelled", "", "error");
-      			}
-      			
-      		}); 
-        }
+        	if(payment >= grandTotal){
+            	swal({
+            		
+            		title: "Customer Paid.",
+            		  text: "This will mark the order as paid, and will set the area as available.",
+            		  type: "warning",
+            		  showCancelButton: true,
+            		  confirmButtonColor: '#dd6855',
+            		  confirmButtonText: 'Yes',
+            		  cancelButtonText: 'No',
+            		  closeOnConfirm: false,
+            		  closeOnCancel: false,
+          		}, function(isConfirm){
+          			if(isConfirm){
+                      	
+      	          		var area_id = localStorage.getItem("area_id")
+      	          		
+      	          		$.ajax({
+      	          				type:'POST',
+      	          				data:{
+      	          					area_id: area_id,
+      	          					payment: payment,
+      	          					loose_change: loose_change
+      	          				},
+      	          				url:'Timeout',
+      	          				success: function(data){
+      	          					//console.log(data);
+      	          					swal("Area is now available!", "", "success");
+	      	                        setTimeout(function() 
+	      	                        {
+	      	                            window.location=window.location;
+	      	                        },1000);
+      	          				}
+      	          			});			
+          			}
+          			
+          			else{
+          				swal("Cancelled", "", "error");
+          			}
+          			
+          		}); //end swal
+
+        	}//end if
+        	else{
+        		swal("Payment is Less than the Grand total please double check payment amount", "", "error");
+        	}
+        }// end function
         
         
         	
@@ -342,7 +364,7 @@
       	          					},
       	          				url:'Timeout',
       	          				success: function(data){
-      	          					console.log(data);
+      	          					//console.log(data);
       	                		    swal("Area is now available!", "", "success");
       	                        setTimeout(function() 
       	                        {
@@ -377,7 +399,7 @@
 	            		var remarks = $("#remarks").val();
 	            		var area_id = $("#area-"+idIndex).val();
 	            		
-	            		console.log(area_id);
+	            		//console.log(area_id);
 	
 	            		if (guestcount != "" &&  remarks != "") 
 	            	    {
@@ -390,7 +412,7 @@
 	            							},
 	            						url:'AddCustomer',
 	            						success: function(data){
-	            							console.log(data);
+	            							//console.log(data);
 	            							
 	            							$("#area-status-"+idIndex).html("Unavailable");
 	            							swal("Successfully Added!","", "success");
@@ -412,62 +434,36 @@
         		});
     		
     	});	
+        
+        $("#payment").keyup(function() {
+        	//console.log("Payment: "+this.value);
+        	//console.log("GrandTotal: "+grandTotal);
+        	payment = parseFloat(this.value);
+        	if( parseFloat(this.value) >= parseFloat(grandTotal)){
+            	loose_change = Math.abs(parseFloat(grandTotal) - parseFloat(this.value));
+            	$("#loose_change").val( loose_change );
+        	}else{
+        		loose_change = 0;
+            	$("#loose_change").val(0);        		        		
+        	}
+        });
     
         
-        
-        $("#payment").click(function(){
-      	   
-        	swal({
-        		  title: "Are you sure you want to pay bills?",
-        		  text: "Customer bill.",
-        		  type: "warning",
-        		  showCancelButton: true,
-        		  confirmButtonColor: '#dd6855',
-        		  confirmButtonText: 'Yes',
-        		  cancelButtonText: 'No',
-        		  closeOnConfirm: false,
-        		  closeOnCancel: false,
-        		  
-        		}, function(isConfirm){
-        			if(isConfirm){
-	                    var payment = $("#payment").val();	
-	
-	            		if (payment != "") 
-	            	    {
-	            					$.ajax({
-	            						type:'POST',
-	            						data:{
-	            							payment: payment,
-	            							area_id: area_id
-	            							},
-	            						url:'CustomerPayment',
-	            						success: function(data){
-	            							console.log(data);
-	            							
-	            							$("#area-status-"+idIndex).html("Unavailable");
-	            							swal("Successfully Added!","", "success");
-	            							// 	alert(data2); 
-	            	                    setTimeout(function() 
-	            	                    {
-	            	                        window.location=window.location;
-	            	                    },1000);
-	            						}
-	            					});
-	            	    }
-	            		
-	            		var payment = $("#payment").val("");
-
-        			}
-        			else{
-          				swal("Cancelled", "", "error");
-          			}
-        		});
-    		
-    	});	
-        
-    	
-    	
-    	
+    	function getOrderData(area_id){
+    		saveToLocalStorage(area_id);
+    		$.ajax({
+    			type:'GET',
+    			data:{
+    		    	area_id: area_id
+    			},
+    			url:'GetOrderData',
+    			success: function(data) {
+    			    $("#contents").html(data);
+    			}
+    		}).then(function(){
+    			grandTotal = $("#grandTotal").text();
+    		});
+    	}
     	
     	
         jQuery(document).ready(function() {
